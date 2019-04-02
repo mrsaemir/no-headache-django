@@ -354,7 +354,6 @@ def patch_settings(project_root, db):
         raise
 
 
-
 def disable_other_settings(project_root):
     settings_modules = handlers.get_absolute_path(project_root, 'settings.py')
     if len(settings_modules) > 1:
@@ -373,4 +372,4 @@ def disable_other_settings(project_root):
 
 def enable_other_settings(disabled_settings):
     for settings in disabled_settings:
-        os.system(f'mv {settings}.tmp {settings[:-4]}')
+        os.system(f'mv {settings}.tmp {settings}')
