@@ -145,9 +145,9 @@ def can_sudo():
 
 
 def replace_word_in_file(file_path, original, replace_with):
-    with open(file_path, 'r+') as f:
+    with open(file_path, 'r') as f:
         file = f.read()
-        file.replace(original, replace_with)
+        file = file.replace(original, replace_with)
     with open(file_path, 'w') as f:
         f.write(file)
 
@@ -159,3 +159,4 @@ def create_hash_name(len):
         [random.choice(string.ascii_lowercase + string.ascii_uppercase + string.digits) for i in range(n)])
 
     return rand_str(len)
+

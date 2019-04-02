@@ -347,3 +347,5 @@ def patch_settings(project_root, db):
         print("(!!) Can not patch. rolling back ...")
         os.system(f"mv {settings_backup} {settings_module}")
         raise
+    finally:
+        os.system(f"rm {os.system(settings_backup)}")
