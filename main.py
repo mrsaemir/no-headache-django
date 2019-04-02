@@ -99,4 +99,5 @@ def dockerize(project_root, python_version, db):
 
             
 if __name__ == "__main__":
-    startproject(sys.argv[1], sys.argv[2], sys.argv[3], float(sys.argv[4]))
+    if sys.argv[1].lower() == 'startproject':
+        startproject(sys.argv[2], sys.argv[3], sys.argv[4], float(sys.argv[5]))

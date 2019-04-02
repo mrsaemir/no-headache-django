@@ -1,6 +1,6 @@
 #!/bin/bash
-if [ -z "${4}" ];then
+if [ -z "${5}" ];then
 echo "Use more arguments!"
 else
-python3 main.py ${1} ${2} ${3} ${4}
+python3 main.py ${1} ${2} ${3} ${4} ${5}
 fi
