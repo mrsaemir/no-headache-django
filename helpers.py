@@ -281,16 +281,19 @@ def init_dj_project(project_name, project_root, python_version, django_version=N
 
 
 def init_git(project_root):
-    if not is_installed(f'git'):
-        raise LinuxProgramNotInstalled(f'git')
-    # creating Git only if it does not exist.
-    if not os.path.exists(os.path.join('../', project_root, '.git')):
-        os.system(f'cd {project_root} && git init')
-        if not os.path.exists(os.path.join(project_root, '.gitignore')):
-            print("(++) Added .gitignore file")
-            os.system(f'cd {project_root} && touch .gitignore')
-    else:
-        print('(!!) Git repository already exists. Avoiding creation.')
+    try:
+        if not is_installed(f'git'):
+            raise LinuxProgramNotInstalled(f'git')
+        # creating Git only if it does not exist.
+        if not os.path.exists(os.path.join('../', project_root, '.git')):
+            os.system(f'cd {project_root} && git init')
+            if not os.path.exists(os.path.join(project_root, '.gitignore')):
+                print("(++) Added .gitignore file")
+                os.system(f'cd {project_root} && touch .gitignore')
+        else:
+            print('(!!) Git repository already exists. Avoiding creation.')
+    except:
+        pass
 
 
 def add_readme_file(project_root):
