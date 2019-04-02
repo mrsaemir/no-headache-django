@@ -3,6 +3,7 @@ import helpers
 from file_handlers import can_sudo
 import sys
 
+
 # starting a new project
 def startproject(project_name, project_root, db, python_version):
     if not helpers.has_valid_name_django(project_name):
@@ -44,9 +45,6 @@ def startproject(project_name, project_root, db, python_version):
         # adding readme.rst
         helpers.add_readme_file(os.path.join(project_path, project_name))
 
-        print("(!!) Successfully dockerized your project. Dockerization may have problems in some cases which project structure is not standard.")
-        print("(!!) Check standard projec structure in http://github.com/mrsaemir/no-headache-django README.md")
-
     except PermissionError as e:
         if can_sudo():
             pass
@@ -60,6 +58,7 @@ def startproject(project_name, project_root, db, python_version):
         if can_sudo():
             print("(!!) Resetting permissions")
             os.system(f'chmod 777 -R {project_path}')
+
 
 # for the use of projects that are not initiated using this awesome script
 def dockerize(project_root, python_version, db):
@@ -81,6 +80,9 @@ def dockerize(project_root, python_version, db):
         helpers.create_Dockerfile(project_root, f"python:{python_version}", 'postgres')
         helpers.create_docker_compose(project_root, db)
 
+        print("(!!) Successfully dockerized your project. Dockerization may have problems in some cases which project structure is not standard.")
+        print("(!!) Check standard projec structure in http://github.com/mrsaemir/no-headache-django README.md")
+
     except PermissionError as e:
         if can_sudo():
             pass
@@ -97,4 +99,4 @@ def dockerize(project_root, python_version, db):
 
             
 if __name__ == "__main__":
-    startproject(sys.argv[1],sys.argv[2],sys.argv[3],sys.argv[4])
+    startproject(sys.argv[1], sys.argv[2], sys.argv[3], float(sys.argv[4]))

@@ -153,4 +153,9 @@ def replace_word_in_file(file_path, original, replace_with):
 
 
 def create_hash_name(len):
-    pass
+    import random
+    import string
+    rand_str = lambda n: ''.join(
+        [random.choice(string.ascii_lowercase + string.ascii_uppercase + string.digits) for i in range(n)])
+
+    return rand_str(len)
