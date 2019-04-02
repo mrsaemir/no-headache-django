@@ -316,9 +316,10 @@ def create_docker_compose(project_root, db):
         if not choice.lower() == 'c':
             print("(!!) Avoiding creation of a new Dockerfile")
             return
-
+    docker_compose_path = os.path.join(os.path.dirname(handlers.get_managepy_path(project_root)), "docker-compose.yaml")
     if db == 'postgres':
-        os.system(f'cp ./docker-compose/postgres/docker-compose.yaml {os.path.join(os.path.dirname(handlers.get_managepy_path(project_root)), "docker-compose.yaml")}')
+        os.system(f'cp ./docker-compose/postgres/docker-compose.yaml {docker_compose_path}')
+        handlers.replace_word_in_file(docker_compose_path, '../development_data', f'../development_data_{handlers.create_hash_name(6)}')
     else:
         raise NotImplementedError()
 

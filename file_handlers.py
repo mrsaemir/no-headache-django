@@ -142,3 +142,15 @@ def can_sudo():
     if user is None:
         return False
     return True
+
+
+def replace_word_in_file(file_path, original, replace_with):
+    with open(file_path, 'r+') as f:
+        file = f.read()
+        file.replace(original, replace_with)
+    with open(file_path, 'w') as f:
+        f.write(file)
+
+
+def create_hash_name(len):
+    pass
