@@ -64,7 +64,7 @@ def startproject(project_name, project_root, db, python_version):
 def dockerize(project_root, python_version, db):
     print('(!!) Use with CAUTION! Your projects structure may be not standard and running this project may cause problems in your scripts. Take backups.')
 
-    choice = input("To continue press c/C")
+    choice = input("To continue press c/C: ")
     if choice.lower() != 'c':
         print("(!!) Avoiding Dockerization.")
         return
