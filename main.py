@@ -62,6 +62,9 @@ def startproject(project_name, project_root, db, python_version):
 
 # for the use of projects that are not initiated using this awesome script
 def dockerize(project_root, python_version, db):
+    if not os.path.exists(project_root):
+        raise FileNotFoundError("Can not find your project.")
+
     print('(!!) Use with CAUTION! Your projects structure may be not standard and running this project may cause problems in your scripts. Take backups.')
 
     choice = input("To continue press c/C: ")
@@ -70,7 +73,8 @@ def dockerize(project_root, python_version, db):
         return
 
     try:
-        # db will be auto detected soon
+        # disabling settings that are not our desired ones.
+        disabled_settings = helpers.disable_other_settings(project_root)
         helpers.patch_settings(project_root, db)
         requirements_file = helpers.get_or_create_requirements(project_root)
         helpers.inspect_postgres_dependency(requirements_file)
@@ -79,6 +83,8 @@ def dockerize(project_root, python_version, db):
         helpers.create_entrypoint(project_root)
         helpers.create_Dockerfile(project_root, f"python:{python_version}", 'postgres')
         helpers.create_docker_compose(project_root, db)
+        # enabling disabled settings.
+
 
         print("(!!) Successfully dockerized your project. Dockerization may have problems in some cases which project structure is not standard.")
         print("(!!) Check standard projec structure in http://github.com/mrsaemir/no-headache-django README.md")
@@ -93,6 +99,7 @@ def dockerize(project_root, python_version, db):
         raise
 
     finally:
+        helpers.enable_other_settings(disabled_settings)
         if can_sudo():
             print("(!!) Resetting permissions")
             os.system(f'chmod 777 -R {project_root}')

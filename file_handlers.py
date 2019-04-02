@@ -106,12 +106,12 @@ def get_wsgi_file(project_root):
             f"(!!) Can not find 'wsgi.py' file within directory: {project_root}"
         )
     if len(wsgi_file) != 1:
-        raise FileExistsError(
-            f"""(!!) There are more than one wsgi.py modules within this directory ({project_root}),
-            Found wsgi.py modules are:
-            {wsgi_file}
-            """
-        )
+        print("(!!) Found more than one wsgi files.")
+        for i in range(len(wsgi_file)):
+            print(f'{i} - {wsgi_file[i]}')
+        choice = int(input("Enter your project setting's index number: "))
+        assert (-1 < choice < len(wsgi_file))
+        return wsgi_file[choice]
     return wsgi_file[0]
 
 

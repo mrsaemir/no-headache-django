@@ -343,12 +343,34 @@ def patch_settings(project_root, db):
                 patch = patch.read()
             handlers.add_to_file(patch, settings_module)
             inspect_postgres_dependency(get_or_create_requirements(project_root))
+            os.system(f"rm {settings_backup}")
             print("(++) Successfully patched your project to be used with postgres")
+
         else:
             raise NotImplementedError()
     except Exception as e:
         print("(!!) Can not patch. rolling back ...")
         os.system(f"mv {settings_backup} {settings_module}")
         raise
-    finally:
-        os.system(f"rm {os.system(settings_backup)}")
+
+
+
+def disable_other_settings(project_root):
+    settings_modules = handlers.get_absolute_path(project_root, 'settings.py')
+    if len(settings_modules) > 1:
+        print("(!!) Found more than one settings module.")
+        print("(??) Which one is your desired one? ")
+        for i in range(len(settings_modules)):
+            print(f"{i} - {settings_modules[i]}")
+        choice = int(input("Enter your project setting's index number: "))
+        assert (-1 < choice < len(settings_modules))
+        settings_modules.pop(choice)
+        for settings in settings_modules:
+            os.system(f'mv {settings} {settings}.tmp')
+        # returning the list of disabled settings
+        return settings_modules
+
+
+def enable_other_settings(disabled_settings):
+    for settings in disabled_settings:
+        os.system(f'mv {settings}.tmp {settings[:-4]}')
