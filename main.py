@@ -1,7 +1,7 @@
 import os
 import helpers
 from file_handlers import can_sudo
-
+import sys
 
 # starting a new project
 def startproject(project_name, project_root, db, python_version):
@@ -61,7 +61,6 @@ def startproject(project_name, project_root, db, python_version):
             print("(!!) Resetting permissions")
             os.system(f'chmod 777 -R {project_path}')
 
-
 # for the use of projects that are not initiated using this awesome script
 def dockerize(project_root, python_version, db):
     print('(!!) Use with CAUTION! Your projects structure may be not standard and running this project may cause problems in your scripts. Take backups.')
@@ -95,3 +94,7 @@ def dockerize(project_root, python_version, db):
         if can_sudo():
             print("(!!) Resetting permissions")
             os.system(f'chmod 777 -R {project_root}')
+
+            
+if __name__ == "__main__":
+    startproject(sys.argv[1],sys.argv[2],sys.argv[3],sys.argv[4])
