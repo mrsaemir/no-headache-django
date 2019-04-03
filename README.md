@@ -1,6 +1,6 @@
 # No-HEADACHE-DJANGO
 
-> NO-HEADACHE-DJANGO helps you developing your
+> NO-HEADACHE-DJANGO helps you develope your
 > django application in the same environment as
 > your production server!
 
@@ -13,26 +13,26 @@ Start your project with NO-DJANGO-HEADACHE and enjoy:
   - automatic docker-compose.yaml creation
   - automatic deploy function and docker swarm deploy.yaml file which helps you deploy your newly created application using nginx, gunicorn and docker swarm.
 
-# Features:
+# Features
 
-  - NO-HEADACHE-DJANGO automatically detects your project structure and build appropriate docker-compose.yaml and deploy.yaml(swarm) file.
+  - NO-HEADACHE-DJANGO automatically detects your project structure and builds appropriate docker-compose.yaml and deploy.yaml(swarm) file.
   - NO-HEADACHE-DJANGO supports almost all of the popular databases including postgres and mysql.
 
 
 It Also does:
-  - Automatically creation of README.me, git, .gitignore and requirements.txt files if needed. 
+  - Automatic creation of README.me, git, .gitignore and requirements.txt files if needed. 
   - Tools for easily managing your application during development.
 
 
 > NO-HEADACHE-DJANGO is created for developers 
-> who want their project working under on any machine
+> who want their project working on any machine
 > without any problems but don't want to learn stuff 
 > like Docker or deployment processes.
 > This will help them deploy almost any django project 
 > in seconds. easy and reliable.
 
 
-### Tech
+### REQUIREMENTS
 
 NO-HEADACHE-DJANGO is specially designed for ubuntu systems and needs python >= 3 to run, but remember you need to install your desired versin of python if you are willing to create a project using that version.
 
@@ -51,8 +51,23 @@ $ apt install docker-compose
 $ apt install virtualenv
 ```
 
-### Using NO-HEADACHE-DJANGO:
+### Using NO-HEADACHE-DJANGO
 NO-HEADACHE-DJANGO works perfectly with projects that follow the standard project structure of django or projects that are created using NO-HEADACHE-DJANGO, although it supports dockerizing other projects but this is not reliable and may not work as expected.
+
+Standard project structure for django is something like this:
+
+├── project_folder
+│   ├── manage.py
+│   ├── project_name
+│   │   ├── __init__.py
+│   │   ├── settings.py
+│   │   ├── urls.py
+│   │   └── wsgi.py
+│   └── requirements.txt
+├────── app1 
+├────── app2 
+└────── app3 
+
 
 *So the best way to have a fully dockerized django is using NO-HEADACHE-DJANGO while starting the project*
 
@@ -60,17 +75,33 @@ starting a project:
 ```sh
 $ no-headache startproject <project_name> <project_root> <database> <python_versioin>
 ```
-exp:
+example:
 ```sh
 $ no-headache startproject amazing_project . postgres 3.6
 ```
-This will a create a project named 'amazing_project' in your current directory using postgres database and python3.6
+This will create a project named 'amazing_project' in your current directory using postgres database and python3.6
+
+The result would be something like this:
+
+├── amazing_project
+│   ├── docker-compose.yaml
+│   ├── Dockerfile
+│   ├── entrypoint.sh
+│   ├── manage.py
+│   ├── amazing_project
+│   │   ├── __init__.py
+│   │   ├── settings.py
+│   │   ├── urls.py
+│   │   └── wsgi.py
+│   ├── README.rst
+│   └── requirements.txt
+└── venv
 
 Dockerizing a project:
 ```sh
 $ no-headache dockerize <project_root> <database> <python_version>
 ```
-exp:
+example:
 ```sh
 $ no-headache dockerize ./an_old_project mysql 2.7
 ```
