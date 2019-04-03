@@ -1,6 +1,6 @@
 import os
 import helpers
-from file_handlers import can_sudo, get_settings_file
+from file_handlers import can_sudo, get_settings_file, get_managepy_path
 import sys
 
 
@@ -109,9 +109,34 @@ def dockerize(project_root, python_version):
             print("(!!) Resetting permissions")
             os.system(f'chmod 777 -R {project_root}')
 
-            
+
+# getting a shell inside your docker container
+def shell(project_root=None):
+    import exceptions
+    if not can_sudo():
+        raise PermissionError('You need sudo access to run docker!')
+    else:
+        if not (helpers.is_installed('docker') and helpers.is_installed('docker-compose')):
+            raise exceptions.LinuxProgramNotInstalled("Requirements Not installed! Run: 'apt install docker docker.io docker-compose'")
+        if project_root:
+            # prefered dir
+            compose = os.path.join(os.path.dirname(get_managepy_path(project_root)),
+                                   'docker-compose.yaml')
+        else:
+            # current dir
+            compose = '.'
+        os.system(f'cd {os.path.dirname(compose)} && docker-compose exec web bash')
+
+
 if __name__ == "__main__":
     if sys.argv[1].lower() == 'startproject':
         startproject(sys.argv[2], sys.argv[3], sys.argv[4], float(sys.argv[5]))
     if sys.argv[1].lower() == 'dockerize':
         dockerize(sys.argv[2], sys.argv[3])
+    if sys.argv[1].lower() == 'shell':
+        try:
+            path = sys.argv[2]
+        except IndexError:
+            path = None
+        shell(path)
+

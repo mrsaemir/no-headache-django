@@ -160,3 +160,12 @@ def create_hash_name(len):
 
     return rand_str(len)
 
+
+def get_docker_compose(project_root):
+    docker_compose = os.path.join(
+        get_managepy_path(project_root),
+        'docker-compose.yaml'
+    )
+    if not os.path.exists(docker_compose):
+        raise FileNotFoundError("(!!) Can not find docker-compose.yaml")
+    return docker_compose
