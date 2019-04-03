@@ -32,7 +32,7 @@ It Also does:
 > in seconds. easy and reliable.
 
 
-### REQUIREMENTS
+### Requirements
 
 NO-HEADACHE-DJANGO is specially designed for ubuntu systems and needs python >= 3 to run, but remember you need to install your desired versin of python if you are willing to create a project using that version.
 

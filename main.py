@@ -1,6 +1,6 @@
 import os
 import helpers
-from file_handlers import can_sudo
+from file_handlers import can_sudo, get_settings_file
 import sys
 
 
@@ -61,7 +61,7 @@ def startproject(project_name, project_root, db, python_version):
 
 
 # for the use of projects that are not initiated using this awesome script
-def dockerize(project_root, db, python_version):
+def dockerize(project_root, python_version):
     if not os.path.exists(project_root):
         raise FileNotFoundError("Can not find your project.")
 
@@ -75,6 +75,11 @@ def dockerize(project_root, db, python_version):
     try:
         # disabling settings that are not our desired ones.
         disabled_settings = helpers.disable_other_settings(project_root)
+        # auto-detecting database system
+        db = helpers.detect_database(get_settings_file(project_root))
+        if not db:
+            print('(!!) Can not auto-detect your database system.')
+            db = input('(!!) What is your database? example: postgres\n')
         helpers.patch_settings(project_root, db)
         requirements_file = helpers.get_or_create_requirements(project_root)
         helpers.inspect_postgres_dependency(requirements_file)
@@ -87,7 +92,7 @@ def dockerize(project_root, db, python_version):
 
 
         print("(!!) Successfully dockerized your project. Dockerization may have problems in some cases which project structure is not standard.")
-        print("(!!) Check standard projec structure in http://github.com/mrsaemir/no-headache-django README.md")
+        print("(!!) Check standard project structure in http://github.com/mrsaemir/no-headache-django README.md")
 
     except PermissionError as e:
         if can_sudo():
@@ -108,3 +113,5 @@ def dockerize(project_root, db, python_version):
 if __name__ == "__main__":
     if sys.argv[1].lower() == 'startproject':
         startproject(sys.argv[2], sys.argv[3], sys.argv[4], float(sys.argv[5]))
+    if sys.argv[1].lower() == 'dockerize':
+        dockerize(sys.argv[2], sys.argv[3])

@@ -365,11 +365,20 @@ def disable_other_settings(project_root):
         assert (-1 < choice < len(settings_modules))
         settings_modules.pop(choice)
         for settings in settings_modules:
-            os.system(f'mv {settings} {settings}.tmp')
+            os.system(f'mv {settings} {settings}.tmp 2>/dev/null ')
         # returning the list of disabled settings
         return settings_modules
 
 
 def enable_other_settings(disabled_settings):
     for settings in disabled_settings:
-        os.system(f'mv {settings}.tmp {settings}')
+        os.system(f'mv {settings}.tmp {settings} 2>/dev/null ')
+
+
+def detect_database(settings_path):
+    with open(settings_path, 'r') as settings:
+        settings = settings.read()
+    if 'django.db.backends.postgresql' in settings:
+        return 'postgres'
+    else:
+        return None
