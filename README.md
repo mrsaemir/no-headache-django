@@ -55,7 +55,7 @@ $ apt install virtualenv
 NO-HEADACHE-DJANGO works perfectly with projects that follow the standard project structure of django or projects that are created using NO-HEADACHE-DJANGO, although it supports dockerizing other projects but this is not reliable and may not work as expected.
 
 Standard project structure for django is something like this:
-
+<pre>
 ├── project_folder
 │   ├── manage.py
 │   ├── project_name
@@ -67,7 +67,7 @@ Standard project structure for django is something like this:
 ├────── app1 
 ├────── app2 
 └────── app3 
-
+</pre>
 
 *So the best way to have a fully dockerized django is using NO-HEADACHE-DJANGO while starting the project*
 
@@ -82,7 +82,7 @@ $ no-headache startproject amazing_project . postgres 3.6
 This will create a project named 'amazing_project' in your current directory using postgres database and python3.6
 
 The result would be something like this:
-
+<pre>
 ├── amazing_project
 │   ├── docker-compose.yaml
 │   ├── Dockerfile
@@ -96,7 +96,7 @@ The result would be something like this:
 │   ├── README.rst
 │   └── requirements.txt
 └── venv
-
+</pre>
 Dockerizing a project:
 ```sh
 $ no-headache dockerize <project_root> <database> <python_version>
