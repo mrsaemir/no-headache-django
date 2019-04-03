@@ -61,7 +61,7 @@ def startproject(project_name, project_root, db, python_version):
 
 
 # for the use of projects that are not initiated using this awesome script
-def dockerize(project_root, python_version, db):
+def dockerize(project_root, db, python_version):
     if not os.path.exists(project_root):
         raise FileNotFoundError("Can not find your project.")
 
