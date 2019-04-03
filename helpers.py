@@ -371,8 +371,9 @@ def disable_other_settings(project_root):
 
 
 def enable_other_settings(disabled_settings):
-    for settings in disabled_settings:
-        os.system(f'mv {settings}.tmp {settings} 2>/dev/null ')
+    if disabled_settings:
+        for settings in disabled_settings:
+            os.system(f'mv {settings}.tmp {settings} 2>/dev/null ')
 
 
 def detect_database(settings_path):
