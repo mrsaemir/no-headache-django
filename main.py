@@ -183,9 +183,11 @@ if __name__ == "__main__":
             is_daemon = sys.argv[3]
             if is_daemon.lower() == 'daemon':
                 up(path, True)
+            else:
+                up(path)
         except IndexError:
-            pass
-        up(path)
+            up(path)
+
 
     elif sys.argv[1].lower() == 'down':
         try:
