@@ -7,6 +7,9 @@ from exceptions import (EntryPointNotAvailable,
                         RequirementsNotAvailable,
                         LinuxProgramNotInstalled)
 
+# location of package files.
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
 
 # this function creates a Dockerfile.
 # python version is the version specified for the Dockerfile and is required.
@@ -221,7 +224,7 @@ def design_settings_file(project_name, project_root, db, python_version):
         if python_version >= 3:
             if db == 'postgres':
                 os.system(f'mv {settings_module} {settings_backup}')
-                os.system(f'cp ./dj/dj2/postgres/settings.py {settings_module}')
+                os.system(f'cp {os.path.join(BASE_DIR, "dj/dj2/postgres/settings.py")} {settings_module}')
                 inspect_postgres_dependency(get_or_create_requirements(project_root))
                 os.system(f"rm {settings_backup}")
 
@@ -230,7 +233,7 @@ def design_settings_file(project_name, project_root, db, python_version):
                     settings.write(f"\nWSGI_APPLICATION = '{project_name}.wsgi.application'")
             elif db == 'mysql':
                 os.system(f'mv {settings_module} {settings_backup}')
-                os.system(f'cp ./dj/dj2/mysql/settings.py {settings_module}')
+                os.system(f'cp {os.path.join(BASE_DIR, "dj/dj2/mysql/settings.py")} {settings_module}')
                 inspect_mysql_dependency(get_or_create_requirements(project_root))
                 os.system(f"rm {settings_backup}")
 
@@ -242,7 +245,7 @@ def design_settings_file(project_name, project_root, db, python_version):
         else:
             if db == 'postgres':
                 os.system(f'mv {settings_module} {settings_backup}')
-                os.system(f'cp ./dj/dj1/postgres/settings.py {settings_module}')
+                os.system(f'cp {os.path.join(BASE_DIR, "dj/dj1/postgres/settings.py")} {settings_module}')
                 inspect_mysql_dependency(get_or_create_requirements(project_root))
                 os.system(f"rm {settings_backup}")
 
@@ -350,11 +353,12 @@ def create_docker_compose(project_root, db):
             return
     docker_compose_path = os.path.join(os.path.dirname(handlers.get_managepy_path(project_root)), "docker-compose.yaml")
     if db == 'postgres':
-        os.system(f'cp ./docker-compose/postgres/docker-compose.yaml {docker_compose_path}')
-        handlers.replace_word_in_file(docker_compose_path, '../development_data', f'../development_data_{handlers.create_hash_name(6)}')
+        os.system(f'cp {os.path.join(BASE_DIR, "docker-compose/postgres/docker-compose.yaml")} {docker_compose_path}')
+        handlers.replace_word_in_file(docker_compose_path, '../development_data',
+                                      f'../development_data_{handlers.create_hash_name(6)}')
 
     elif db == 'mysql':
-        os.system(f'cp ./docker-compose/mysql/docker-compose.yaml {docker_compose_path}')
+        os.system(f'cp {os.path.join(BASE_DIR, "docker-compose/mysql/docker-compose.yaml")} {docker_compose_path}')
         handlers.replace_word_in_file(docker_compose_path, '../development_data',
                                       f'../development_data_{handlers.create_hash_name(6)}')
     else:
