@@ -423,5 +423,7 @@ def detect_database(settings_path):
         settings = settings.read()
     if 'django.db.backends.postgresql' in settings:
         return 'postgres'
+    elif 'django.db.backend.mysql' in settings:
+        return 'mysql'
     else:
         return None
