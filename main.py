@@ -90,7 +90,6 @@ def dockerize(project_root, python_version):
         helpers.create_entrypoint(project_root)
         helpers.create_Dockerfile(project_root, f"python:{python_version}", 'postgres')
         helpers.create_docker_compose(project_root, db)
-        # enabling disabled settings.
 
 
         print("(!!) Successfully dockerized your project. Dockerization may have problems in some cases which project structure is not standard.")
@@ -106,10 +105,48 @@ def dockerize(project_root, python_version):
         raise
 
     finally:
+        # enabling disabled settings.
         helpers.enable_other_settings(disabled_settings)
         if can_sudo():
             print("(!!) Resetting permissions")
             os.system(f'chmod 777 -R {project_root}')
+
+
+def up(project_root=None, daemon=False):
+    import exceptions
+    if not can_sudo():
+        raise PermissionError('You need sudo access to run docker!')
+    else:
+        if not (helpers.is_installed('docker') and helpers.is_installed('docker-compose')):
+            raise exceptions.LinuxProgramNotInstalled("Requirements Not installed! Run: 'apt install docker docker.io docker-compose'")
+        if project_root:
+            # preferred dir
+            compose = os.path.join(os.path.dirname(get_managepy_path(project_root)),
+                                   'docker-compose.yaml')
+        else:
+            # current dir
+            compose = '.'
+        if not daemon:
+            os.system(f'cd {os.path.dirname(compose)} && docker-compose up')
+        else:
+            os.system(f'cd {os.path.dirname(compose)} && docker-compose up -d')
+
+
+def down(project_root=None):
+    import exceptions
+    if not can_sudo():
+        raise PermissionError('You need sudo access to run docker!')
+    else:
+        if not (helpers.is_installed('docker') and helpers.is_installed('docker-compose')):
+            raise exceptions.LinuxProgramNotInstalled("Requirements Not installed! Run: 'apt install docker docker.io docker-compose'")
+        if project_root:
+            # preferred dir
+            compose = os.path.join(os.path.dirname(get_managepy_path(project_root)),
+                                   'docker-compose.yaml')
+        else:
+            # current dir
+            compose = '.'
+        os.system(f'cd {os.path.dirname(compose)} && docker-compose down')
 
 
 # getting a shell inside your docker container
@@ -121,7 +158,7 @@ def shell(project_root=None):
         if not (helpers.is_installed('docker') and helpers.is_installed('docker-compose')):
             raise exceptions.LinuxProgramNotInstalled("Requirements Not installed! Run: 'apt install docker docker.io docker-compose'")
         if project_root:
-            # prefered dir
+            # preferred dir
             compose = os.path.join(os.path.dirname(get_managepy_path(project_root)),
                                    'docker-compose.yaml')
         else:
@@ -133,9 +170,31 @@ def shell(project_root=None):
 if __name__ == "__main__":
     if sys.argv[1].lower() == 'startproject':
         startproject(sys.argv[2], sys.argv[3], sys.argv[4], float(sys.argv[5]))
-    if sys.argv[1].lower() == 'dockerize':
+
+    elif sys.argv[1].lower() == 'dockerize':
         dockerize(sys.argv[2], sys.argv[3])
-    if sys.argv[1].lower() == 'shell':
+
+    elif sys.argv[1].lower() == 'up':
+        try:
+            path = sys.argv[2]
+        except IndexError:
+            raise IndexError("Project root not specified")
+        try:
+            is_daemon = sys.argv[3]
+            if is_daemon.lower() == 'daemon':
+                up(path, True)
+        except IndexError:
+            pass
+        up(path)
+
+    elif sys.argv[1].lower() == 'down':
+        try:
+            path = sys.argv[2]
+        except IndexError:
+            raise IndexError("Project root not specified")
+        down(path)
+
+    elif sys.argv[1].lower() == 'shell':
         try:
             path = sys.argv[2]
         except IndexError:
