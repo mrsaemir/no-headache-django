@@ -1,0 +1,7 @@
+.idea/misc.xml
+.idea/modules.xml
+.idea/no-headache-django.iml
+.idea/workspace.xml
+__pycache__/
+virenv/
+
