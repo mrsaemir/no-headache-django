@@ -39,7 +39,10 @@ def create_Dockerfile(project_root, python_version, db, requirements_file=None,
             docker_file.write("ENV PYTHONDONTWRITEBYTECODE 1\n")
             docker_file.write("ENV PYTHONUNBUFFERED 1\n\n")
             if db == 'postgres':
-                docker_file.write("RUN apt install libpq-dev\n\n")
+                docker_file.write("RUN apt update && install libpq-dev\n\n")
+            elif db == 'mysql':
+                #docker_file.write("RUN apt update && apt install libmysqlclient-dev\n\n")
+                pass
             else:
                 raise NotImplementedError()
             # creating project core folder.
@@ -186,6 +189,14 @@ def inspect_postgres_dependency(requirements_path):
             requirements_file.write('\n\npsycopg2-binary==2.7.4')
 
 
+def inspect_mysql_dependency(requirements_path):
+    with open(requirements_path, 'r+') as requirements_file:
+        requirements = requirements_file.read()
+        if 'mysqlclient' not in requirements.lower():
+            print('(++) Adding MYSQL to project requirements.')
+            requirements_file.write('\n\nmysqlclient==1.4.2')
+
+
 def inspect_django_dependency(requirements_path, project_root):
     with open(requirements_path, 'r+') as requirements_file:
         requirements = requirements_file.read()
@@ -217,13 +228,31 @@ def design_settings_file(project_name, project_root, db, python_version):
                 with open(settings_module, 'a+') as settings:
                     settings.write(f"\n\nROOT_URLCONF = '{project_name}.urls'")
                     settings.write(f"\nWSGI_APPLICATION = '{project_name}.wsgi.application'")
+            elif db == 'mysql':
+                os.system(f'mv {settings_module} {settings_backup}')
+                os.system(f'cp ./dj/dj2/mysql/settings.py {settings_module}')
+                inspect_mysql_dependency(get_or_create_requirements(project_root))
+                os.system(f"rm {settings_backup}")
+
+                with open(settings_module, 'a+') as settings:
+                    settings.write(f"\n\nROOT_URLCONF = '{project_name}.urls'")
+                    settings.write(f"\nWSGI_APPLICATION = '{project_name}.wsgi.application'")
             else:
                 raise NotImplementedError()
         else:
             if db == 'postgres':
                 os.system(f'mv {settings_module} {settings_backup}')
                 os.system(f'cp ./dj/dj1/postgres/settings.py {settings_module}')
-                inspect_postgres_dependency(get_or_create_requirements(project_root))
+                inspect_mysql_dependency(get_or_create_requirements(project_root))
+                os.system(f"rm {settings_backup}")
+
+                with open(settings_module, 'a+') as settings:
+                    settings.write(f"\nROOT_URLCONF = '{project_name}.urls'")
+                    settings.write(f"\nWSGI_APPLICATION = '{project_name}.wsgi.application'")
+            elif db == 'mysql':
+                os.system(f'mv {settings_module} {settings_backup}')
+                os.system(f'cp ./dj/dj1/mysql/settings.py {settings_module}')
+                inspect_mysql_dependency(get_or_create_requirements(project_root))
                 os.system(f"rm {settings_backup}")
 
                 with open(settings_module, 'a+') as settings:
@@ -323,6 +352,11 @@ def create_docker_compose(project_root, db):
     if db == 'postgres':
         os.system(f'cp ./docker-compose/postgres/docker-compose.yaml {docker_compose_path}')
         handlers.replace_word_in_file(docker_compose_path, '../development_data', f'../development_data_{handlers.create_hash_name(6)}')
+
+    elif db == 'mysql':
+        os.system(f'cp ./docker-compose/mysql/docker-compose.yaml {docker_compose_path}')
+        handlers.replace_word_in_file(docker_compose_path, '../development_data',
+                                      f'../development_data_{handlers.create_hash_name(6)}')
     else:
         raise NotImplementedError()
 

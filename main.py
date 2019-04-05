@@ -32,6 +32,8 @@ def startproject(project_name, project_root, db, python_version):
 
         if db == 'postgres':
             helpers.inspect_postgres_dependency(requirements_path)
+        elif db == 'mysql':
+            helpers.inspect_mysql_dependency(requirements_path)
         else:
             raise NotImplementedError()
 

@@ -1,0 +1,45 @@
+# Automatically created bt "no-headache-django" project.
+# Star me on github http://github.com/mrsaemir/no-headache-django
+
+version: '3'
+
+services:
+  web:
+    restart: always
+    build: .
+    ports:
+      - 8000:8000
+    depends_on:
+      - mysql
+    volumes:
+      - ./:/project_core
+      - ../development_data/static:/static/
+      - ../development_data/media:/media/
+    command: bash -c "python manage.py makemigrations && python manage.py migrate --noinput && python manage.py collectstatic --noinput && python manage.py runserver 0.0.0.0:8000"
+
+    environment:
+      # security
+      - DEBUG=True
+      - SECRET_KEY=top_secret
+      - ALLOWED_HOSTS=["127.0.0.1", "localhost"]
+      # database
+      - DB_NAME=django_db
+      - DB_USER=django
+      - DB_PASSWORD=django_password
+      - DB_HOST=mysql
+      - DB_PORT=3306
+      # STATIC AND MEDIA URL
+      - STATIC_URL=/static/
+      - MEDIA_URL=/media/
+
+  mysql:
+    image: mysql:8.0
+    command: --default-authentication-plugin=mysql_native_password
+    volumes:
+      - ../development_data/postgres:/var/lib/mysql
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=root_password
+      - MYSQL_DATABASE=django_db
+      - MYSQL_USER=django
+      - MYSQL_PASSWORD=django_password
