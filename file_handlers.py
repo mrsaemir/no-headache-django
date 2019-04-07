@@ -118,6 +118,22 @@ def get_wsgi_file(project_root):
 def get_settings_file(project_root):
     try:
         manage_py_path = get_managepy_path(project_root)
+
+        # invoking first method of settings discovery.
+        import re
+        settings_app = re.compile(r"(?P<app_name>[a-zA-Z0-9_]+).settings")
+        with open(manage_py_path, 'r') as manage_py_file:
+            manage_py_file = manage_py_file.read()
+        try:
+            settings_module = os.path.join(os.path.dirname(manage_py_path),
+                                           settings_app.search(manage_py_file).group('app_name'),
+                                           'settings.py')
+            if os.path.exists(settings_module):
+                return settings_module
+        except Exception as e:
+            pass
+
+        # invoking second module
         settings_abs_path = get_absolute_path(os.path.dirname(manage_py_path), 'settings.py')
         if not settings_abs_path:
             raise SettingsFileNotAvailable(

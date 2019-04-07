@@ -207,7 +207,6 @@ def inspect_django_dependency(requirements_path, project_root):
             # checking if venv exists in project:
             venv_path = os.path.join('../', project_root, 'venv')
             if os.path.exists(venv_path):
-                #raise IOError()
                 os.system(f"{os.path.join(venv_path, 'bin/pip')} freeze --version | grep Django >> {requirements_path}")
             else:
                 print('(++) Adding Django to project requirements.')
@@ -218,7 +217,6 @@ def inspect_django_dependency(requirements_path, project_root):
 def design_settings_file(project_name, project_root, db, python_version):
     settings_module = handlers.get_settings_file(project_root)
     settings_backup = settings_module + '.backup'
-
     try:
         # replacing the new one.
         if python_version >= 3:

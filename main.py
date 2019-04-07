@@ -78,8 +78,12 @@ def dockerize(project_root, python_version):
         return
 
     try:
-        # disabling settings that are not our desired ones.
-        disabled_settings = helpers.disable_other_settings(project_root)
+        try:
+            get_settings_file(project_root)
+        except FileExistsError:
+            # disabling settings that are not our desired ones.
+            disabled_settings = helpers.disable_other_settings(project_root)
+
         # auto-detecting database system
         db = helpers.detect_database(get_settings_file(project_root))
         if not db:
@@ -93,7 +97,6 @@ def dockerize(project_root, python_version):
         helpers.create_entrypoint(project_root)
         helpers.create_Dockerfile(project_root, f"python:{python_version}", 'postgres')
         helpers.create_docker_compose(project_root, db)
-
 
         print("(!!) Successfully dockerized your project. Dockerization may have problems in some cases which project structure is not standard.")
         print("(!!) Check standard project structure in http://github.com/mrsaemir/no-headache-django README.md")
