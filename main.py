@@ -51,7 +51,7 @@ def startproject(project_name, project_root, db, python_version):
         if can_sudo():
             pass
         else:
-            raise PermissionError("(!!) Run as Administrator or change permissions.")
+            raise PermissionError("(!!) Permission Required!. Run as Administrator or change permissions.")
 
     except Exception as e:
         raise
@@ -64,6 +64,9 @@ def startproject(project_name, project_root, db, python_version):
 
 # for the use of projects that are not initiated using this awesome script
 def dockerize(project_root, python_version):
+    # assuming no settings are disabled at first.
+    disabled_settings = False
+
     if not os.path.exists(project_root):
         raise FileNotFoundError("Can not find your project.")
 
@@ -99,14 +102,16 @@ def dockerize(project_root, python_version):
         if can_sudo():
             pass
         else:
-            raise PermissionError("(!!) Run as Administrator or change permissions.")
+            print("(!!) Permission Required! Run as Administrator or change permissions.")
+            return
 
     except Exception as e:
         raise
 
     finally:
-        # enabling disabled settings.
-        helpers.enable_other_settings(disabled_settings)
+        if disabled_settings:
+            # enabling disabled settings.
+            helpers.enable_other_settings(disabled_settings)
         if can_sudo():
             print("(!!) Resetting permissions")
             os.system(f'chmod 777 -R {project_root}')
@@ -167,39 +172,29 @@ def shell(project_root=None):
         os.system(f'cd {os.path.dirname(compose)} && docker-compose exec web bash')
 
 
+# total shit!
 if __name__ == "__main__":
     if sys.argv[1].lower() == 'startproject':
         startproject(sys.argv[2], sys.argv[3], sys.argv[4], float(sys.argv[5]))
 
     elif sys.argv[1].lower() == 'dockerize':
-        dockerize(sys.argv[2], sys.argv[3])
+        dockerize(os.path.abspath(sys.argv[2]), sys.argv[3])
 
     elif sys.argv[1].lower() == 'up':
         try:
-            path = sys.argv[2]
-        except IndexError:
-            raise IndexError("Project root not specified")
-        try:
             is_daemon = sys.argv[3]
             if is_daemon.lower() == 'daemon':
-                up(path, True)
+                up(os.path.abspath(sys.argv[2]), True)
             else:
-                up(path)
+                up(os.path.abspath(sys.argv[2]), False)
         except IndexError:
-            up(path)
-
+            up(os.path.abspath(sys.argv[2]), False)
 
     elif sys.argv[1].lower() == 'down':
-        try:
-            path = sys.argv[2]
-        except IndexError:
-            raise IndexError("Project root not specified")
-        down(path)
+        down(os.path.abspath(sys.argv[1]))
 
     elif sys.argv[1].lower() == 'shell':
-        try:
-            path = sys.argv[2]
-        except IndexError:
-            path = None
-        shell(path)
+        shell(os.path.abspath(sys.argv[2]))
 
+    else:
+        raise NotImplemented("Command Not Found.")

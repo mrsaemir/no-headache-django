@@ -377,14 +377,14 @@ def patch_settings(project_root, db):
     try:
         os.system(f'cp {settings_module} {settings_backup}')
         if db == 'postgres':
-            with open('./patches/postgres/patches.py', 'r') as patch:
+            with open(f'{os.path.join(BASE_DIR, "patches/postgres/patches.py")}', 'r') as patch:
                 patch = patch.read()
             handlers.add_to_file(patch, settings_module)
             inspect_postgres_dependency(get_or_create_requirements(project_root))
             os.system(f"rm {settings_backup}")
             print("(++) Successfully patched your project to be used with postgres")
         elif db == 'mysql':
-            with open('./patches/mysql/patches.py', 'r') as patch:
+            with open(f'{os.path.join(BASE_DIR, "patches/mysql/patches.py")}', 'r') as patch:
                 patch = patch.read()
             handlers.add_to_file(patch, settings_module)
             inspect_postgres_dependency(get_or_create_requirements(project_root))
