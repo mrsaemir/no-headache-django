@@ -169,9 +169,6 @@ def get_or_create_requirements(project_root):
             os.system(f'rm {requirements_file_path}')
             print('(!!) Requirements.txt file deleted. raising the exception ...')
             raise
-    # inspecting requirements ...
-    inspect_django_dependency(requirements_file_path, project_root)
-    inspect_gunicorn_dependency(requirements_file_path)
     return requirements_file_path
 
 
@@ -181,7 +178,7 @@ def inspect_gunicorn_dependency(requirements_path):
         requirements = requirements_file.read()
         if 'gunicorn' not in requirements.lower():
             print('(++) Adding Gunicorn to project requirements.')
-            requirements_file.write('\ngunicorn==19.9.0')
+            requirements_file.write('\n\ngunicorn==19.9.0')
 
 
 def inspect_postgres_dependency(requirements_path):
@@ -189,7 +186,7 @@ def inspect_postgres_dependency(requirements_path):
         requirements = requirements_file.read()
         if 'psycopg2-binary' not in requirements.lower():
             print('(++) Adding Postgres to project requirements.')
-            requirements_file.write('\n\npsycopg2-binary==2.7.4')
+            requirements_file.write('\npsycopg2-binary==2.7.4')
 
 
 def inspect_mysql_dependency(requirements_path):
@@ -197,7 +194,7 @@ def inspect_mysql_dependency(requirements_path):
         requirements = requirements_file.read()
         if 'mysqlclient' not in requirements.lower():
             print('(++) Adding MYSQL to project requirements.')
-            requirements_file.write('\n\nmysqlclient==1.4.2')
+            requirements_file.write('\nmysqlclient==1.4.2')
 
 
 def inspect_django_dependency(requirements_path, project_root):
@@ -244,7 +241,7 @@ def design_settings_file(project_name, project_root, db, python_version):
             if db == 'postgres':
                 os.system(f'mv {settings_module} {settings_backup}')
                 os.system(f'cp {os.path.join(BASE_DIR, "dj/dj1/postgres/settings.py")} {settings_module}')
-                inspect_mysql_dependency(get_or_create_requirements(project_root))
+                inspect_postgres_dependency(get_or_create_requirements(project_root))
                 os.system(f"rm {settings_backup}")
 
                 with open(settings_module, 'a+') as settings:
@@ -252,7 +249,7 @@ def design_settings_file(project_name, project_root, db, python_version):
                     settings.write(f"\nWSGI_APPLICATION = '{project_name}.wsgi.application'")
             elif db == 'mysql':
                 os.system(f'mv {settings_module} {settings_backup}')
-                os.system(f'cp ./dj/dj1/mysql/settings.py {settings_module}')
+                os.system(f'cp {os.path.join(BASE_DIR, "dj/dj1/mysql/settings.py")} {settings_module}')
                 inspect_mysql_dependency(get_or_create_requirements(project_root))
                 os.system(f"rm {settings_backup}")
 
@@ -260,7 +257,7 @@ def design_settings_file(project_name, project_root, db, python_version):
                     settings.write(f"\nROOT_URLCONF = '{project_name}.urls'")
                     settings.write(f"\nWSGI_APPLICATION = '{project_name}.wsgi.application'")
             else:
-                raise NotImplementedError("version 1 settings")
+                raise NotImplementedError()
 
     except Exception as e:
         print('(!!) An error occurred designing settings file. rolling back ... ')

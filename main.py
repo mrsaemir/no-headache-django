@@ -175,10 +175,9 @@ def shell(project_root=None):
         os.system(f'cd {os.path.dirname(compose)} && docker-compose exec web bash')
 
 
-# total shit!
 if __name__ == "__main__":
     if sys.argv[1].lower() == 'startproject':
-        startproject(sys.argv[2], sys.argv[3], sys.argv[4], float(sys.argv[5]))
+        startproject(sys.argv[2], os.path.abspath(sys.argv[3]), sys.argv[4], float(sys.argv[5]))
 
     elif sys.argv[1].lower() == 'dockerize':
         dockerize(os.path.abspath(sys.argv[2]), sys.argv[3])
