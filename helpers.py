@@ -42,7 +42,7 @@ def create_Dockerfile(project_root, python_version, db, requirements_file=None,
             docker_file.write("ENV PYTHONDONTWRITEBYTECODE 1\n")
             docker_file.write("ENV PYTHONUNBUFFERED 1\n\n")
             if db == 'postgres':
-                docker_file.write("RUN apt update && install libpq-dev\n\n")
+                docker_file.write("RUN apt update && apt install libpq-dev\n\n")
             elif db == 'mysql':
                 #docker_file.write("RUN apt update && apt install libmysqlclient-dev\n\n")
                 pass
