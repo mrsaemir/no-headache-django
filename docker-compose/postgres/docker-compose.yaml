@@ -19,20 +19,8 @@ services:
       - ../development_data/media:/media/
     command: bash -c "python manage.py makemigrations && python manage.py migrate --noinput && python manage.py collectstatic --noinput && python manage.py runserver 0.0.0.0:8000"
 
-    environment:
-      # security
-      - DEBUG=True
-      - SECRET_KEY=top_secret
-      - ALLOWED_HOSTS=["127.0.0.1", "localhost"]
-      # database
-      - DB_NAME=some_db
-      - DB_USER=some_user
-      - DB_PASSWORD=some_password
-      - DB_HOST=db
-      - DB_PORT=5432
-      # STATIC AND MEDIA URL
-      - STATIC_URL=/static/
-      - MEDIA_URL=/media/
+    env_file:
+      - vars.env
 
   db:
     restart: always

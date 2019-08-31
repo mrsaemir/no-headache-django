@@ -349,11 +349,13 @@ def create_docker_compose(project_root, db):
     docker_compose_path = os.path.join(os.path.dirname(handlers.get_managepy_path(project_root)), "docker-compose.yaml")
     if db == 'postgres':
         os.system(f'cp {os.path.join(BASE_DIR, "docker-compose/postgres/docker-compose.yaml")} {docker_compose_path}')
+        os.system(f'cp {os.path.join(BASE_DIR, "docker-compose/postgres/vars.env")} {os.path.dirname(docker_compose_path)}')
         handlers.replace_word_in_file(docker_compose_path, '../development_data',
                                       f'../development_data_{handlers.create_hash_name(6)}')
 
     elif db == 'mysql':
         os.system(f'cp {os.path.join(BASE_DIR, "docker-compose/mysql/docker-compose.yaml")} {docker_compose_path}')
+        os.system(f"cp {os.path.join(BASE_DIR, 'docker-compose/mysql/vars.env')} {os.path.dirname(docker_compose_path)}")
         handlers.replace_word_in_file(docker_compose_path, '../development_data',
                                       f'../development_data_{handlers.create_hash_name(6)}')
     else:
