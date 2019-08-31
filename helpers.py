@@ -48,12 +48,13 @@ def create_Dockerfile(project_root, python_version, db, requirements_file=None,
                 pass
             else:
                 raise NotImplementedError()
+            docker_file.write("RUN useradd -ms /bin/bash user\n\n")
             # creating project core folder.
-            docker_file.write("WORKDIR /project_core\n")
-            docker_file.write("COPY . /project_core\n\n")
+            docker_file.write("WORKDIR /home/user/project_core\n")
+            docker_file.write("COPY . /home/user/project_core\n\n")
             # managing staticfiles
-            docker_file.write("RUN mkdir -p media\n")
-            docker_file.write("RUN mkdir -p static\n\n")
+            docker_file.write("RUN mkdir -p /home/user/media\n")
+            docker_file.write("RUN mkdir -p /home/user/static\n\n")
             # opening port 8000 by default.
             docker_file.write("EXPOSE 8000\n\n")
 
@@ -101,8 +102,10 @@ def create_Dockerfile(project_root, python_version, db, requirements_file=None,
             entrypoint_file = entrypoint_file[0]
             # relative path to Dockerfile
             entrypoint_file = handlers.get_relative_path(entrypoint_file, os.path.dirname(docker_path))
+            docker_file.write("RUN chmod -R 777 /home/user\n")
             docker_file.write(f"RUN chmod +x {entrypoint_file}\n\n")
-            docker_file.write(f"""CMD ["bash", "{os.path.join('/project_core/', entrypoint_file)}"]\n""")
+            docker_file.write("USER user\n")
+            docker_file.write(f"""CMD ["bash", "{os.path.join('/home/user/project_core', entrypoint_file)}"]\n""")
 
         print(f"(++) Docker file created in {docker_path}")
     except Exception as e:
@@ -347,19 +350,20 @@ def create_docker_compose(project_root, db):
             print("(!!) Avoiding creation of a new Dockerfile")
             return
     docker_compose_path = os.path.join(os.path.dirname(handlers.get_managepy_path(project_root)), "docker-compose.yaml")
+    devel_data = f'development_data_{handlers.create_hash_name(6)}'
     if db == 'postgres':
         os.system(f'cp {os.path.join(BASE_DIR, "docker-compose/postgres/docker-compose.yaml")} {docker_compose_path}')
         os.system(f'cp {os.path.join(BASE_DIR, "docker-compose/postgres/vars.env")} {os.path.dirname(docker_compose_path)}')
-        handlers.replace_word_in_file(docker_compose_path, '../development_data',
-                                      f'../development_data_{handlers.create_hash_name(6)}')
+        handlers.replace_word_in_file(docker_compose_path, '../development_data', devel_data)
 
     elif db == 'mysql':
         os.system(f'cp {os.path.join(BASE_DIR, "docker-compose/mysql/docker-compose.yaml")} {docker_compose_path}')
         os.system(f"cp {os.path.join(BASE_DIR, 'docker-compose/mysql/vars.env')} {os.path.dirname(docker_compose_path)}")
-        handlers.replace_word_in_file(docker_compose_path, '../development_data',
-                                      f'../development_data_{handlers.create_hash_name(6)}')
+        handlers.replace_word_in_file(docker_compose_path, '../development_data', f"../{devel_data}")
     else:
         raise NotImplementedError()
+    os.system(f"mkdir -p {os.path.join(os.path.dirname(os.path.dirname(docker_compose_path)), devel_data, 'media')}")
+    os.system(f"mkdir -p {os.path.join(os.path.dirname(os.path.dirname(docker_compose_path)), devel_data, 'static')}")
 
 
 def has_valid_name_django(name):

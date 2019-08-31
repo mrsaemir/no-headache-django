@@ -12,9 +12,10 @@ services:
     depends_on:
       - mysql
     volumes:
-      - ./:/project_core
-      - ../development_data/static:/static/
-      - ../development_data/media:/media/
+      - ./:/home/user/project_core
+      - ../development_data/static:/home/user/static/
+      - ../development_data/media:/home/user/media/
+
     command: bash -c "python manage.py makemigrations && python manage.py migrate --noinput && python manage.py collectstatic --noinput && python manage.py runserver 0.0.0.0:8000"
 
     env_file:
