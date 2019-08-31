@@ -60,6 +60,7 @@ def startproject(project_name, project_root, db, python_version):
         if can_sudo():
             print("(!!) Resetting permissions")
             os.system(f'chmod 777 -R {project_path}')
+        os.system(f"mv {project_path} {project_path}_project")
 
 
 # for the use of projects that are not initiated using this awesome script
