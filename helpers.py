@@ -350,7 +350,7 @@ def create_docker_compose(project_root, db):
             print("(!!) Avoiding creation of a new Dockerfile")
             return
     docker_compose_path = os.path.join(os.path.dirname(handlers.get_managepy_path(project_root)), "docker-compose.yaml")
-    devel_data = f'development_data_{handlers.create_hash_name(6)}'
+    devel_data = f'../development_data_{handlers.create_hash_name(6)}'
     if db == 'postgres':
         os.system(f'cp {os.path.join(BASE_DIR, "docker-compose/postgres/docker-compose.yaml")} {docker_compose_path}')
         os.system(f'cp {os.path.join(BASE_DIR, "docker-compose/postgres/vars.env")} {os.path.dirname(docker_compose_path)}')
