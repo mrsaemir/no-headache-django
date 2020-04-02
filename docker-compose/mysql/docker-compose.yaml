@@ -16,7 +16,7 @@ services:
       - ../development_data/static:/home/user/static/
       - ../development_data/media:/home/user/media/
 
-    command: bash -c "python manage.py makemigrations && python manage.py migrate --noinput && python manage.py collectstatic --noinput && python manage.py runserver 0.0.0.0:8000"
+    command: bash -c "python manage.py runserver 0.0.0.0:8000"
 
     env_file:
       - vars.env
