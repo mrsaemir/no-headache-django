@@ -63,6 +63,35 @@ MYSQL_DEFAULTS = {
     "DB_PORT": "3306",
 }
 
+MONGO_CHANGES = {
+    "DATABASES": """{
+    'default': {
+        'ENGINE': 'djongo',
+        'ENFORCE_SCHEMA': True,
+        'NAME': os.environ.get('DB_NAME', None),
+        'CLIENT': {
+            'host': f'mongodb://{os.environ.get("DB_USER", None)}:{os.environ.get("DB_PASSWORD", None)}@'
+                    f'{os.environ.get("DB_HOST", None)}:{int(os.environ.get("DB_PORT", None))}/'
+                    f'{os.environ.get("DB_NAME", None)}',
+            'port': int(os.environ.get('DB_PORT', None)),
+            'username': os.environ.get('DB_USER', None),
+            'password': os.environ.get('DB_PASSWORD', None),
+            'authSource': 'admin',
+            'authMechanism': 'SCRAM-SHA-1',
+        }
+    }
+}
+    """
+}
+
+MONGO_DEFAULTS = {
+    "DB_NAME": "some_db",
+    "DB_USER": "some_user",
+    "DB_PASSWORD": "some_password",
+    "DB_HOST": "db",
+    "DB_PORT": "27017",
+}
+
 
 def add_single_envvar(env_file_path, key, val):
     try:
@@ -137,3 +166,19 @@ def add_mysql(settings_path):
 
     return r
 
+
+def add_mongo(settings_path):
+    r = 0
+    try:
+        env_path = os.path.dirname(os.path.dirname(settings_path))
+        editor = PyEditor(settings_path)
+        # adding base changes
+        editor.bulk_exchange(MONGO_CHANGES)
+    except Exception as e:
+        print(e)
+        return 1
+
+    # adding base changes
+    r += add_bulk_envvar(env_path, MONGO_DEFAULTS)
+
+    return r

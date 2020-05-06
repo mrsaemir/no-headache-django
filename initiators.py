@@ -66,6 +66,8 @@ def init_requirements(path, project_name, db):
         r = r + dependencies.inspect_postgres_dependency(req_path)
     elif db == 'mysql':
         r = r + dependencies.inspect_mysql_dependency(req_path)
+    elif db == 'mongo':
+        r = r + dependencies.inspect_mongo_dependency(req_path)
     else:
         print(f"Can't work with {db}")
         r = r + 1
@@ -105,6 +107,8 @@ def init_dockerfile(path, python_version, db):
                 docker_file.write("\nRUN apt update && apt install -y libpq-dev")
             elif db == 'mysql':
                 docker_file.write("\nRUN apt update && apt install -y python-mysqldb")
+            elif db == 'mongo':
+                pass
             else:
                 raise NotImplementedError()
 
@@ -166,6 +170,11 @@ def init_docker_compose(path, db):
         elif db == 'mysql':
             os.system(f'cp {os.path.join(BASE_DIR, "docker-compose/mysql/docker-compose.yaml")} {docker_compose_path}')
             replace_word_in_file(docker_compose_path, '../development_data', f"../{devel_data}")
+
+        elif db == 'mongo':
+            os.system(f'cp {os.path.join(BASE_DIR, "docker-compose/mongo/docker-compose.yaml")} {docker_compose_path}')
+            replace_word_in_file(docker_compose_path, '../development_data', f"../{devel_data}")
+
         else:
             raise NotImplementedError(f"{db} Not Supported")
         os.system(f"mkdir -p {os.path.join(os.path.dirname(docker_compose_path), devel_data, 'media')}")
@@ -207,6 +216,8 @@ def init_envvars(project_name, path, db):
         r += settings.add_postgres(os.path.join(path, f'{project_name}/settings.py'))
     elif db == 'mysql':
         r += settings.add_mysql(os.path.join(path, f'{project_name}/settings.py'))
+    elif db == 'mongo':
+        r += settings.add_mongo(os.path.join(path, f'{project_name}/settings.py'))
     else:
         raise NotImplementedError(f"{db} Not Supported")
 

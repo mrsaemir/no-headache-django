@@ -3,7 +3,7 @@ import os
 import re
 
 PYTHON_VERSIONS = [3.6, 3.7, 3.8]
-DATABASES = ['postgres', 'mysql', 'sqlite']
+DATABASES = ['postgres', 'mysql', 'sqlite', 'mongo']
 
 
 # inspects if a program is installed in linux
