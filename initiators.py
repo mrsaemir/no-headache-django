@@ -112,9 +112,10 @@ def init_dockerfile(path, python_version, db):
             else:
                 raise NotImplementedError()
 
-            # creating a non-root user
-            docker_file.write("\n\n# Creating a non-root user:")
-            docker_file.write("\nRUN useradd -ms /bin/bash user")
+            if not db == 'sqlite':
+                # creating a non-root user
+                docker_file.write("\n\n# Creating a non-root user:")
+                docker_file.write("\nRUN useradd -ms /bin/bash user")
 
             # creating project core folder.
             docker_file.write("\n\n# Setting project's working directory:")
@@ -137,9 +138,10 @@ def init_dockerfile(path, python_version, db):
             docker_file.write("\nRUN chmod -R 777 /home/user")
             docker_file.write(f"\nRUN chmod +x ./entrypoint.sh")
 
-            # changing to non-root user
-            docker_file.write(f"\n\n# Changing to non-root user:")
-            docker_file.write("\nUSER user")
+            if not db == 'sqlite':
+                # changing to non-root user
+                docker_file.write(f"\n\n# Changing to non-root user:")
+                docker_file.write("\nUSER user")
 
             # opening port 8000
             docker_file.write("\n\n# Opening port 8000:")
