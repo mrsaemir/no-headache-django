@@ -1,6 +1,5 @@
 import random
 import string
-import re
 
 
 def create_hash_name(length):
