@@ -50,7 +50,7 @@ def inspect_mongo_dependency(requirements_path):
             if 'djongo' not in requirements.lower():
                 print('(++) Adding MONGO to project requirements.')
                 requirements_file.write('\n\nsqlparse==0.2.4')
-                requirements_file.write('\n\ndjongo==1.3.2')
+                requirements_file.write('\n\ndjongo==1.3.1')
         # we also need to change the django version to 2.2
         django_reg = re.compile("Django?[0-9.=]*")
         helpers.change_word_by_regex(requirements_path, django_reg, "\n\nDjango==2.2")
